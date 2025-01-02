@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f0f8ff; /* Color de fondo suave */
+            color: #333; /* Color del texto */
+        }
+        h1 {
+            color: #4a90e2; /* Color del título */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50; /* Color de fondo del botón */
+            color: white; /* Color del texto del botón */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor al pasar el mouse */
+            transition: background-color 0.3s; /* Transición suave */
+            margin: 5px; /* Espaciado entre botones */
+        }
+        button:hover {
+            background-color: #45a049; /* Color del botón al pasar el mouse */
+        }
+        #locationDisplay {
+            margin-top: 20px;
+            font-weight: bold; /* Texto en negrita */
+            color: #e67e22; /* Color del texto de coordenadas */
+        }
+        #messageDisplay {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #e74c3c; /* Color del mensaje */
+        }
+        #registrados {
+            margin-top: 30px;
+            text-align: left;
+            display: inline-block;
+            background-color: #ffffff; /* Fondo blanco para los registros */
+            border: 1px solid #ccc; /* Borde gris claro */
+            border-radius: 5px; /* Bordes redondeados */
+            padding: 10px; /* Espaciado interno */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+    </style>
+</head>
+<body>
+    <h1>REGISTRO DE USUARIOS DE MI PAGINA WEB</h1>
+    <br>
+    <button id="getLocation">REGISTRAR Y ENVIAR A LA PAGINA</button>
+    <div id="locationDisplay"></div>
+    <div id="messageDisplay"></div> <!-- Nuevo div para el mensaje -->
+    
+    <div id="registrados"></div> <!-- Div para mostrar los registros -->
+
+    <script>
+        // Cargar registros desde localStorage al iniciar
+        let registros = JSON.parse(localStorage.getItem('registros')) || [];
+
+        // Mostrar registros al cargar la página
+        mostrarRegistros();
+
+        document.getElementById('getLocation').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const coords = `${position.coords.latitude}, ${position.coords.longitude}`;
+                    document.getElementById('locationDisplay').innerText = coords;
+                    document.getElementById('messageDisplay').innerText = 'Ya tengo tu ubicación JAJKAJKAJKJKA'; // Mensaje en la parte inferior
+
+                    // Agregar el registro al array
+                    registros.push({ coordenadas: coords });
+                    localStorage.setItem('registros', JSON.stringify(registros)); // Guardar en localStorage
+                    mostrarRegistros(); // Mostrar registros actualizados
+                }, error => {
+                    console.error(error);
+                    document.getElementById('locationDisplay').innerText = 'Error al obtener la ubicación.';
+                    document.getElementById('messageDisplay').innerText = ''; // Limpiar mensaje en caso de error
+                });
+            } else {
+                document.getElementById('locationDisplay').innerText = 'La geolocalización no es soportada por este navegador.';
+                document.getElementById('messageDisplay').innerText = ''; // Limpiar mensaje en caso de error
+            }
+        });
+
+       
+
+        function mostrarRegistros() {
+            const lista = registros.length > 0 ? registros.map(registro => `Coordenadas: ${registro.coordenadas}`).join('<br>') : 'No hay registros disponibles.';
+            document.getElementById('registrados').innerHTML = `<h3>Registros:</h3>${lista}`;
+        }
+    </script>
+</body>
+</html>
